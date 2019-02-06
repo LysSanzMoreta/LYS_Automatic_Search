@@ -1,15 +1,7 @@
  #!/usr/bin/env python
+ 
+#CITATION https://www.biorxiv.org/content/10.1101/540229v1
 #####IMPORT ALL NECESSARY MODULES#####
-
-#EXAMPLES TO RUN
-#WINDOWS: Put quotes in paths due to special characters
-#python3 Link_Your_Sites_in_PyMOL_Updated.py --PDB "C:/Users/Lys Sanz Moreta/Documents/New_genes_10_23_2017/PINK1.pdb" --Gene "C:/Users/Lys Sanz Moreta/Dropbox/THESIS/GENEaln/New_IDS/TGUT00000017792.map2finch.fasta" --M8 "C:/Users/Lys Sanz Moreta/Documents/New_genes_10_23_2017/PINK1_TGUT00000017792.map2finch.fasta/M8/out" --Full_PDB_sequence "C:/Users/Lys Sanz Moreta/Documents/New_genes_10_23_2017/PINK1.fasta" --file_domains /home/lys/Documents/New_genes_10_23_2017/TLR3_Domain.fasta --sequence_number 1 --missing_data no
-
-#LINUX: Put quotes around list of domains due to special tokens, the paths do not need double quotes unless special characters are present
-#python3 Link_Your_Sites_in_PyMOL_Updated.py --PDB /home/lys/Documents/New_genes_10_23_2017/TLR3.pdb --Gene /home/lys/Dropbox/THESIS/GENEaln/New_IDS/TGUT00000007158.map2finch.fasta --M8 /home/lys/Documents/New_genes_10_23_2017/TLR3_TGUT00000007158.map2finch.fasta/M8/out --Full_PDB_sequence /home/lys/Documents/New_genes_10_23_2017/TLR3.fasta --file_domains /home/lys/Documents/New_genes_10_23_2017/TLR3_Domain.fasta --sequence_number 1 --missing_data no
-
-
-
 import sys, ast, json
 import os
 import argparse

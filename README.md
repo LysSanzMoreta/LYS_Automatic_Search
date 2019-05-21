@@ -8,7 +8,7 @@ Citation: If you use this scripts make sure to cite : https://www.biorxiv.org/co
 
 Scripts that i) Mine the RCSB database [10] using the blast alignment tool to find the best matching homologous sequences ii) Fetch their domain positions by using Prosites [3,8,9] iii) Parse the output of PAML extracting the positional information of fast-evolving sites and transform them into the coordinate system of the protein structure iv) Output a file per gene with the positions correlations to its homologous sequence. This output is used as an input in the GUi to generate the graphical assesment. The basic tutorial on these scripts is available at https://www.youtube.com/watch?v=8ui1TxpOd6M<br/>
 
-Requires: Python3, Pandas, Numpy, Tkinter, PyMOL (GUI (currently uses 2.7 python only :( ) and python package (python 3)) ---> Use anaconda 3 to install easily
+Requires: Python3, Pandas, Numpy, Tkinter, PyMOL (I am afraid currently a license is needed to use the latest pyMOL that works in python 3) ---> Use anaconda 3 to install easily
 
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) FIRST STEP:<br/>

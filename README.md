@@ -14,6 +14,7 @@ Requires: Python3, Pandas, Numpy, Tkinter, PyMOL (GUI (currently uses 2.7 python
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) FIRST STEP:<br/>
 -LYS_PDB_Search.py:<br/>
     ```python3 LYS_PDB_Search.py --Genes Proteins/Trial_sequences.fasta --Codeml Gene_and_path_to_codeml_result.fasta```
+    <br/>
     a) INPUT FILES:<br/>
         1) File with coding sequences to analyze: Whatever format, preferably, simple identifiers without spaces (to avoid errors) <br/> 
         2) Tab separated file : Column 1: gene identifier (same as in file a)) and Column 2: Path to the codeml output file containing the + sites <br/>

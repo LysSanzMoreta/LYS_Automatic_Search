@@ -24,7 +24,7 @@ Requires: Python3, Pandas, Numpy, Tkinter, PyMOL (GUI (currently uses 2.7 python
 3)Lys_Pymol_Images: Empty for now <br/>
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) SECOND STEP:<br/>
--LYS_PyMOL_input_Dataframe_GUI.py: <br/> If using in server and pymol python package version 2.2 installed via anaconda3 does not work download files outside the server and run the script with pymol python package version 1.8 (is the only one currently working, 2.2 has a bug) <br/>
+-LYS_PyMOL_input_Dataframe_GUI.py: <br/> If using in server and pymol python package version 2.2 installed via anaconda3 does not work download files outside the server and run the script with pymol python package version 1.8. Current versions of Pymol work too but you require a license <br/>
 ```python3 LYS_PyMOL_input_Dataframe_GUI.py```  <br/>
 Use this command sequence as examples to extract the Position dataframes and their corresponding PDB files to separated folders (again, in case pymol does not work properly in the server):<br/>
         

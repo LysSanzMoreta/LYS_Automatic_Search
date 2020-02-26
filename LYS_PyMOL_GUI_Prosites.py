@@ -570,7 +570,7 @@ def Pymol(angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
     cmd.extend("Colour_by_Selection", Colour_by_Selection)
     print("Structure will be at %s" % (os.path.dirname(PDB_file)))
     Colour_by_Selection(sname)
-    pymol.cmd.png(os.path.dirname(PDB_file) + "/%s_Picture" % (sname.split('.')[0]))
+    pymol.cmd.png(os.path.dirname(PDB_file) + "/%s_Picture" % (sname.split('.')[0]),dpi=600)
 
 
 class MyFrame(Frame):

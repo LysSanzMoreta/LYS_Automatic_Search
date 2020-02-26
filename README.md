@@ -10,6 +10,8 @@ Scripts that i) Mine the RCSB database [10] using the blast alignment tool to fi
 
 Requires: Python3, Pandas, Numpy, Tkinter, PyMOL (I am afraid currently a license is needed to use the latest pyMOL that works in python 3) ---> Use anaconda 3 to install easily
 
+WARNING: TKINTER STRUGGLES WITH HIGH DEFINITION SCREENS, not resolved yet by the tkinter people. So the GUI will look strange
+
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) FIRST STEP:<br/>
 -LYS_PDB_Search.py:<br/>

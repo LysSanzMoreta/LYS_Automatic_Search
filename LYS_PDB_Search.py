@@ -566,9 +566,9 @@ def Calling_Pymol():
     List_protein_sequences=[Translate_and_Remove_missing_data(sequence) for sequence in List_protein_sequences]
     #Generate the full and filtered summary dataframe with the top suggested homologous proteins from PDB
 
-    #PDB_files_dataframe = Download_selected_PDB_files_and_add_resolution_and_percentage_id(Initial_dataframe(List_protein_sequences,List_protein_names))
+    PDB_files_dataframe = Download_selected_PDB_files_and_add_resolution_and_percentage_id(Initial_dataframe(List_protein_sequences,List_protein_names))
     #To speed up the process if pdb files already downloaded----> Remember to comment out the create and delete old folder
-    PDB_files_dataframe = pd.read_csv('Full_Blast_results_against_PDB_Filtered.tsv',sep='\t')
+    #PDB_files_dataframe = pd.read_csv('Full_Blast_results_against_PDB_Filtered.tsv',sep='\t')
     #Read the file with paths to codeml output
     Codeml = pd.read_csv(codeml_output, sep='\s+', header=None)
     Fasta_ids= Codeml.iloc[:,0].tolist()

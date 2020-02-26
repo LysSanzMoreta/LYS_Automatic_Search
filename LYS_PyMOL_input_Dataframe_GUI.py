@@ -74,12 +74,11 @@ def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
     '''Visualization program'''
 
     #LAUNCH PYMOL
-    #readline.parse_and_bind('tab: complete')  # Set up path to pymol environment (in case is not installed)
-    # pymol launching: quiet (-q) (does not display errors), without GUI (-c) and with arguments from command line
-    #pymol.pymol_argv = ['pymol','-q'] + sys.argv[1:]
-    #pymol.launch()
-    print('printing')
-    pymol. finish_launching()
+    launch=True
+    if launch:
+        pymol.pymol_argv = ['pymol'] + sys.argv[1:]
+        pymol.finish_launching(['pymol'])
+    #pymol. finish_launching()
 
     # Read User Input: PDB file should be in the folder created by LYS_PDB_Search
     PDB_file = os.path.abspath(os.path.join(os.path.dirname(Dataframe_path), '..','PDB_files',ntpath.basename(Dataframe_path).split('_')[-2]))

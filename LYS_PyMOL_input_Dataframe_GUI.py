@@ -164,7 +164,7 @@ def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
     cmd.extend("Colour_by_Selection", Colour_by_Selection)
     print("Structure will be at %s" % (os.path.abspath(os.path.join(os.path.dirname(Dataframe_path), '..','LYS_Pymol_Images'))))
     Colour_by_Selection(sname)
-    pymol.cmd.png(os.path.abspath(os.path.join(os.path.dirname(Dataframe_path), '..','LYS_Pymol_Images',ntpath.basename(Dataframe_path))))
+    pymol.cmd.png(os.path.abspath(os.path.join(os.path.dirname(Dataframe_path), '..','LYS_Pymol_Images',ntpath.basename(Dataframe_path))),dpi=600)
 
 
 class MyFrame(Frame):

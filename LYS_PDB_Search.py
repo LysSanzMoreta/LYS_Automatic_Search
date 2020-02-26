@@ -609,7 +609,7 @@ def Calling_Pymol():
 
 if __name__ == "__main__":
 
-    #Folders(Genes,"PDB_files")
+    Folders(Genes,"PDB_files")
     Folders(Genes,'Positions_Dataframes')
     Folders(Genes,'LYS_Pymol_Images')
     Calling_Pymol()

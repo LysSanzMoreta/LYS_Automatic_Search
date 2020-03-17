@@ -1,0 +1,6 @@
+sca1.105.1.map2per.fasta.paml.p1 /home/lys/Downloads/LYS_Automatic_Search-master/TestSequences/Fasta_sca1.105.1.map2per.fasta.paml/M8/out
+sca1.106.1.map2per.fasta.paml.p1 /home/lys/Downloads/LYS_Automatic_Search-master/TestSequences/Fasta_sca1.106.1.map2per.fasta.paml/M8/out
+sca1.117.1.map2per.fasta.paml.p1 /home/lys/Downloads/LYS_Automatic_Search-master/TestSequences/Fasta_sca1.117.1.map2per.fasta.paml/M8/out
+sca1.119.1.map2per.fasta.paml.p1 /home/lys/Downloads/LYS_Automatic_Search-master/TestSequences/Fasta_sca1.119.1.map2per.fasta.paml/M8/out
+sca193.4.1.map2per.fasta.paml.p1 /home/lys/Downloads/LYS_Automatic_Search-master/TestSequences/Fasta_sca193.4.1.map2per.fasta.paml/M8/out
+

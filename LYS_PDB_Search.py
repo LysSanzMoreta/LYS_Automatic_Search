@@ -604,8 +604,8 @@ def Calling_Pymol():
             Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, Gene_file_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
         except:
             pass
-            #List_domains = []
-            #Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, Gene_file_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
+            List_domains = []
+            Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, Gene_file_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
 
 if __name__ == "__main__":
 

@@ -110,9 +110,9 @@ def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
         cmd.show_as(shape, 'all')
         cmd.color('gray', 'all')
         #ROTATION
-        cmd.rotate([1,0,0], angle = angle_x,selection = "all") # Commands to rotate the structures to visualize some specific side of the protein [x,y,z]
-        cmd.rotate([0,1,0], angle = angle_y,selection = "all") # Commands to rotate the structures to visualize some specific side of the protein [x,y,z]
-        cmd.rotate([0,0,1], angle = angle_z,selection = "all") # Commands to rotate the structures to visualize some specific side of the protein [x,y,z]
+        cmd.rotate([1,0,0], angle = float(angle_x),selection = "all") # Commands to rotate the structures to visualize some specific side of the protein [x,y,z]
+        cmd.rotate([0,1,0], angle = float(angle_y),selection = "all") # Commands to rotate the structures to visualize some specific side of the protein [x,y,z]
+        cmd.rotate([0,0,1], angle = float(angle_z),selection = "all") # Commands to rotate the structures to visualize some specific side of the protein [x,y,z]
 
         #ELIMINATING CHAINS
         # Eliminating chains in the structure if desired

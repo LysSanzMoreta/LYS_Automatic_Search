@@ -169,7 +169,7 @@ def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
 
 class MyFrame(Frame):
     def button_action(self): #Insert all the default values here
-        pymol.cmd.reinitialize('everything')
+        #pymol.cmd.reinitialize('everything')
         #Required arguments
         try:
             self.Dataframe = self.button1_entry.get()

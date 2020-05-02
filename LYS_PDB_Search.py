@@ -58,9 +58,10 @@ parser.add_argument('--format', help = 'Sequence or Multiple Alignment File Form
 parser.add_argument("--prob", help = 'Choice of level of posterior probability on the sites, 95% or 99% from M8 Out file', default= int(99)) 	# prob : Posterior probability percentage of the positive sites , 99 or 95, default= 99
 parser.add_argument("--missing_data", help = 'Decide if the missing data("N") should be removed from the nucleotide sequence, default = yes, recommended for the alignment', default='yes') 	# missing_data : remove or not missing data from the sequence alignment: yes or no, default=yes
 parser.add_argument("--print_alignment",help= 'Choose to visualize the PDB file sequence aligned with the gene, default = no', default='no')
+parser.add_argument("--number_homologous",help= 'Select the top n homologous proteins to be chosen to perform the positions dataframes ordered by resolution', default=int(3))
 
 args = parser.parse_args()
-Genes,codeml_output,Gene_file_format,prob,missing_data,print_alignment = [args.Proteins,args.Codeml,args.format,args.prob,args.missing_data,args.print_alignment]
+Genes,codeml_output,Gene_file_format,prob,missing_data,print_alignment,number_homologous = [args.Proteins,args.Codeml,args.format,args.prob,args.missing_data,args.print_alignment,args.number_homologous]
 
 #Check all the necessary files are present and the right arguments are given:
 File_formats = ['fasta','phylip_sequential','clustal','embl','genebank','gb','abi','ace','fastq-sanger','fastq','fastq-solexa','fastq-illumina','ig','imgt','pdb-seqres','pdb-atom','phd','phylip','pir','seqxml','sff','stockholm','swiss','tab','qual','uniprot-xml']
@@ -113,6 +114,8 @@ def Blast_and_List_PDB_files(gene_sequence): #Translated gene sequence
                     #Other lines
                     identity=lines.split(',')[0]
                     identity=eval(identity[identity.find("(")+1:identity.find(")")].strip('%'))
+                    if identity < 50:
+                        warnings.warn("Percent Id lower that 50%")
                     Identities.append(identity)
                     positives = lines.split(',')[1]
                     positives = eval(positives[positives.find("(") + 1:positives.find(")")].strip('%'))
@@ -273,8 +276,9 @@ def Download_selected_PDB_files_and_add_resolution_and_percentage_id(initial_dat
     ungrouped_dataframe['Chains'] = ungrouped_dataframe['Chains']
 
     ungrouped_dataframe['Resolution'] = ungrouped_dataframe['Resolution'].astype('float64')
-
-    min_vals = ungrouped_dataframe.groupby(['Gene'])[['PDB_files','Chains','PercentID','Coverage','Resolution']].apply(lambda x: x.nsmallest(3, columns=['Resolution']))
+    #SELECT NUMBER OF PROTEIN MATCHES TO BE SELECTED
+    print(ungrouped_dataframe["Resolution"])
+    min_vals = ungrouped_dataframe.groupby(['Gene'])[['PDB_files','Chains','PercentID','Coverage','Resolution']].apply(lambda x: x.nsmallest(int(number_homologous), columns=['Resolution']))
     min_indexes = min_vals.index.levels[1]
     filtered_dataframe = ungrouped_dataframe.iloc[min_indexes]  # Get only the rows where the percentid and coverage are maximum
     filtered_dataframe.reset_index(inplace=True, drop=True)
@@ -528,7 +532,8 @@ def Wrapper_of_all_functions(PDB_sequence,Gene,Chains,M8,List_Domains,Format,pro
     List_of_Positive_Positions =List_of_positions_of_Positive_Sites(M8,prob)
     Gene_missing_data= Gene
     #Checking if the user wants to perform the alignment with or without missing data in the gene
-    if missing_data == 'no': ###FIX THIS PART!!! The sequence 'Gene' will be translated at this point no matter what
+    if missing_data == 'no': ###The sequence 'Gene' will be translated at this point no matter what
+        print("Here")
         Clean_protein_sequence = Translate_and_Remove_missing_data(Gene) #Translate and remove missing data from the gene
         Protein_missing_data = Translate_sequence(Gene)  # Translate gene
         Clean_positions = Corresponding_positions_missing_notmissing_data(Protein_missing_data,Clean_protein_sequence) #Find the equivalent positions among the protein with and without missing data
@@ -567,7 +572,7 @@ def Calling_Pymol():
     #Generate the full and filtered summary dataframe with the top suggested homologous proteins from PDB
 
     PDB_files_dataframe = Download_selected_PDB_files_and_add_resolution_and_percentage_id(Initial_dataframe(List_protein_sequences,List_protein_names))
-    #To speed up the process if pdb files already downloaded----> Remember to comment out the create and delete old folder
+    #To speed up the process if pdb files already downloaded----> Remember to comment out the create and delete old folder function Folders(Genes,"PDB_files")
     #PDB_files_dataframe = pd.read_csv('Full_Blast_results_against_PDB_Filtered.tsv',sep='\t')
     #Read the file with paths to codeml output
     Codeml = pd.read_csv(codeml_output, sep='\s+', header=None)
@@ -603,13 +608,12 @@ def Calling_Pymol():
             List_domains = PROSITE_domains(PDB_sequence)
             Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, Gene_file_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
         except:
-            pass
             List_domains = []
             Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, Gene_file_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
 
 if __name__ == "__main__":
 
-    Folders(Genes,"PDB_files")
-    Folders(Genes,'Positions_Dataframes')
-    Folders(Genes,'LYS_Pymol_Images')
+    #Folders(Genes,"PDB_files")
+    #Folders(Genes,'Positions_Dataframes')
+    #Folders(Genes,'LYS_Pymol_Images')
     Calling_Pymol()

@@ -106,6 +106,7 @@ def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
         }
 
         #BACKGROUND & SHAPES
+        cmd.delete("txt") #To reinitialize it
         cmd.bg_color('white')
         cmd.show_as(shape, 'all')
         cmd.color('gray', 'all')

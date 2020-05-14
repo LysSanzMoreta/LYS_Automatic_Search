@@ -533,7 +533,6 @@ def Wrapper_of_all_functions(PDB_sequence,Gene,Chains,M8,List_Domains,Format,pro
     Gene_missing_data= Gene
     #Checking if the user wants to perform the alignment with or without missing data in the gene
     if missing_data == 'no': ###The sequence 'Gene' will be translated at this point no matter what
-        print("Here")
         Clean_protein_sequence = Translate_and_Remove_missing_data(Gene) #Translate and remove missing data from the gene
         Protein_missing_data = Translate_sequence(Gene)  # Translate gene
         Clean_positions = Corresponding_positions_missing_notmissing_data(Protein_missing_data,Clean_protein_sequence) #Find the equivalent positions among the protein with and without missing data
@@ -613,7 +612,7 @@ def Calling_Pymol():
 
 if __name__ == "__main__":
 
-    Folders(Genes,"PDB_files")
-    Folders(Genes,'Positions_Dataframes')
-    Folders(Genes,'LYS_Pymol_Images')
+    #Folders(Genes,"PDB_files")
+    #Folders(Genes,'Positions_Dataframes')
+    #Folders(Genes,'LYS_Pymol_Images')
     Calling_Pymol()

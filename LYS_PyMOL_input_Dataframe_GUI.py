@@ -70,7 +70,7 @@ def Folders(Genes, folder_name):
     else:
         shutil.rmtree(newpath)  # removes all the subdirectories!
         os.makedirs(newpath,0o777)
-def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
+def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape,legend):
     '''Visualization program'''
 
     #LAUNCH PYMOL
@@ -78,7 +78,7 @@ def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
     if launch:
         pymol.pymol_argv = ['pymol'] + sys.argv[1:]
         pymol.finish_launching(['pymol'])
-    #pymol. finish_launching()
+    pymol. finish_launching()
 
     # Read User Input: PDB file should be in the folder created by LYS_PDB_Search
     PDB_file = os.path.abspath(os.path.join(os.path.dirname(Dataframe_path), '..','PDB_files',ntpath.basename(Dataframe_path).split('_')[-2]))
@@ -122,18 +122,21 @@ def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
 
 
         #LEGEND
-        ###The text that appears in the image, change placement accordingly
-        cgo = []
-        axes = [[5.0, 0.0, 0.0], [0.0, 5.0, 0.0],[0.0, 0.0, 5.0]]  # Change the values if the protein does not quite fall into place
+        if legend == "yes":
+            ###The text that appears in the image, change placement accordingly
+            cgo = []
+            axes = [[5.0, 0.0, 0.0], [0.0, 5.0, 0.0],[0.0, 0.0, 5.0]]  # Change the values if the protein does not quite fall into place
 
-        cyl_text(cgo, plain, [float(lab_x),float(lab_y), float(lab_z)], '%s' % (ntpath.basename(Dataframe_path).split('_')[0:2]), radius=0.6, color=[0.0, 0.0, 0.0],axes=axes)  # x=60 for RIOK2, x=40 and z=60 for ROS1
-        cyl_text(cgo, plain, [float(lab_x), float(lab_y)-10.0, float(lab_z)], 'Positively Selected', radius=0.6, color=[1.0, 0.5, 0.0], axes=axes)
-        cyl_text(cgo, plain, [float(lab_x), float(lab_y)-20.0, float(lab_z)], 'Not selected', radius=0.6, color=[0.5, 0.5, 0.5], axes=axes)
-        cyl_text(cgo, plain, [float(lab_x), float(lab_y)-30.0, float(lab_z)], 'Functional Domain', radius=0.6, color=[0.5, 1.0, 0.5], axes=axes)
-        cyl_text(cgo, plain, [float(lab_x), float(lab_y)-40.0, float(lab_z)], 'Both', radius=0.6, color=[1.0, 0.0, 1.0], axes=axes)
+            cyl_text(cgo, plain, [float(lab_x),float(lab_y), float(lab_z)], '%s' % (ntpath.basename(Dataframe_path).split('_')[0:2]), radius=0.6, color=[0.0, 0.0, 0.0],axes=axes)  # x=60 for RIOK2, x=40 and z=60 for ROS1
+            cyl_text(cgo, plain, [float(lab_x), float(lab_y)-10.0, float(lab_z)], 'Positively Selected', radius=0.6, color=[1.0, 0.5, 0.0], axes=axes)
+            cyl_text(cgo, plain, [float(lab_x), float(lab_y)-20.0, float(lab_z)], 'Not selected', radius=0.6, color=[0.5, 0.5, 0.5], axes=axes)
+            cyl_text(cgo, plain, [float(lab_x), float(lab_y)-30.0, float(lab_z)], 'Functional Domain', radius=0.6, color=[0.5, 1.0, 0.5], axes=axes)
+            cyl_text(cgo, plain, [float(lab_x), float(lab_y)-40.0, float(lab_z)], 'Both', radius=0.6, color=[1.0, 0.0, 1.0], axes=axes)
 
-        cmd.set("cgo_line_radius", 0.03)  # 0.03
-        cmd.load_cgo(cgo, 'txt')
+            cmd.set("cgo_line_radius", 0.03)  # 0.03
+            cmd.load_cgo(cgo, 'txt')
+        else:
+            print("No legend")
         #ZOOM
         cmd.zoom("all", zoom)  # Higher and positive values zoom  out, it accepts negative values
 
@@ -167,10 +170,10 @@ def Pymol(Dataframe_path,angle_x,angle_y,angle_z,lab_x,lab_y,lab_z,zoom,shape):
     Colour_by_Selection(sname)
     pymol.cmd.png(os.path.abspath(os.path.join(os.path.dirname(Dataframe_path), '..','LYS_Pymol_Images',ntpath.basename(Dataframe_path))),dpi=600)
 
-
 class MyFrame(Frame):
     def button_action(self): #Insert all the default values here
-        #pymol.cmd.reinitialize('everything')
+        #pymol.cmd.reinitialize("everything")
+
         #Required arguments
         try:
             self.Dataframe = self.button1_entry.get()
@@ -209,8 +212,10 @@ class MyFrame(Frame):
             self.shape = self.shape_entry.get()
         except:
             self.shape = "cartoon"
-
-
+        try:
+            self.legend = self.legend_entry.get()
+        except:
+            self.legend = "yes"
 
     def __init__(self,den):
         Frame.__init__(self,den)
@@ -243,6 +248,9 @@ class MyFrame(Frame):
         #Shape
         self.shape_label=Label(den,text="Residues shape")
         self.shape_entry=Entry(den,width=7)
+        #Legend
+        self.legend_label=Label(den,text="Show legend")
+        self.legend_entry=Entry(den,width=5)
         #Default values shown to user
 
         self.angle_x.insert(0,0)
@@ -253,6 +261,7 @@ class MyFrame(Frame):
         self.label_z.insert(0,80)
         self.zoom_entry.insert(0,10)
         self.shape_entry.insert(0,"cartoon")
+        self.legend_entry.insert(0,"yes")
 
 
         ##RUN
@@ -275,6 +284,8 @@ class MyFrame(Frame):
         self.label_z.grid(row=3, column=5)
         self.zoom_label.grid(row=4, column=2)
         self.zoom_entry.grid(row=4, column=3)
+        self.legend_label.grid(row=5,column=2)
+        self.legend_entry.grid(row=5,column=3)
         self.shape_label.grid(row=2,column=0)
         self.shape_entry.grid(row=2,column=1)
         self.run.grid(row=8, column=1)
@@ -304,6 +315,7 @@ if __name__ == "__main__":
      Label_z=[]
      List_zoom=[]
      List_shape=[]
+     List_legend =[]
 
      try:
         List = List[0]
@@ -315,11 +327,11 @@ if __name__ == "__main__":
         Label_z = Label_z[0]
         List_zoom = List_zoom[0]
         List_shape=List_shape[0]
+        List_legend=List_legend[0]
 
      except:
          pass
      while True:
-         #pymol.cmd.quit()
          den = tkinter.Tk()
          den.title("Link Your Sites GUI")
          prompt = MyFrame(den)
@@ -341,6 +353,8 @@ if __name__ == "__main__":
             prompt.zoom_entry.insert(0,List_zoom[0])
             prompt.shape_entry.delete(0,"end")
             prompt.shape_entry.insert(0,List_shape[0])
+            prompt.legend_entry.delete(0,"end")
+            prompt.legend_entry.insert(0, List_legend[0])
          except:
              pass
          del List[:]
@@ -352,6 +366,7 @@ if __name__ == "__main__":
          del Label_z[:]
          del List_zoom[:]
          del List_shape[:]
+         del List_legend[:]
 
          den.mainloop()
          #VARIABLES:
@@ -368,6 +383,7 @@ if __name__ == "__main__":
          Label_z.append(prompt.lab_z)
          List_zoom.append(prompt.zoom)
          List_shape.append(prompt.shape)
+         List_legend.append(prompt.legend)
          angle_x = Treatment(prompt.Angle_x)
          angle_y = Treatment(prompt.Angle_y)
          angle_z = Treatment(prompt.Angle_z)
@@ -376,11 +392,13 @@ if __name__ == "__main__":
          label_z = Treatment(prompt.lab_z)
          zoom = Treatment(prompt.zoom)
          shape=prompt.shape
-
+         legend = prompt.legend
 
          den.destroy() #now is working (destroying the root)
 
          #PYMOL
          #Folder for images: Do not create the folder if already created before
          #Folders(Dataframe, "LYS_Pymol_Images")
-         Pymol(Dataframe,angle_x,angle_y,angle_z,label_x,label_y,label_z,zoom,shape)
+         Pymol(Dataframe,angle_x,angle_y,angle_z,label_x,label_y,label_z,zoom,shape,legend)
+
+

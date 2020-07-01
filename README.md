@@ -3,7 +3,7 @@
 
 
 
-Citation: If you use this scripts make sure to cite : https://www.biorxiv.org/content/10.1101/540229v1 <br/>
+Citation: If you use this scripts make sure to cite : https://link.springer.com/article/10.1007/s11692-020-09507-9 <br/>
 
 
 Scripts that i) Mine the RCSB database [10] using the blast alignment tool to find the best matching homologous sequences ii) Fetch their domain positions by using Prosites [3,8,9] iii) Parse the output of PAML extracting the positional information of fast-evolving sites and transform them into the coordinate system of the protein structure iv) Output a file per gene with the positions correlations to its homologous sequence. This output is used as an input in the GUi to generate the graphical assesment. The basic tutorial on these scripts is available at https://youtu.be/ZUxUHWfQ9kw<br/>

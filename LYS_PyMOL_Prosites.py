@@ -20,7 +20,6 @@ import numpy as np
 from pandas import Series
 from math import isnan
 #Biopython
-from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from Bio.Alphabet import generic_protein
 from Bio import SeqRecord,Alphabet,SeqIO
 from Bio.SeqIO import SeqRecord
@@ -31,7 +30,6 @@ from Bio.Seq import MutableSeq
 from Bio.PDB.Polypeptide import is_aa
 from Bio.SeqUtils import seq1
 from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet import IUPAC
 from Bio.pairwise2 import format_alignment
 #Readline
 try:

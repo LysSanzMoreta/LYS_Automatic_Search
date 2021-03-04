@@ -23,7 +23,7 @@ import numpy as np
 from pandas import Series
 from math import isnan
 #Biopython
-from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
+#from Bio.Alphabet.IUPAC import ExtendedIUPACProtein
 from Bio.Alphabet import generic_protein
 from Bio import SeqRecord,Alphabet,SeqIO
 from Bio.SeqIO import SeqRecord
@@ -323,7 +323,7 @@ def validate(seq, alphabet='dna'):
     else:
          return False
 def Translate_sequence(sequence): #Only for coding nucleotide sequences!!!!
-    from Bio.Alphabet import IUPAC,ProteinAlphabet
+    #from Bio.Alphabet import ProteinAlphabet
 
     if validate(sequence) == True: #Check if is a nucleotided sequence
         aa_seq = Seq(sequence).translate(stop_symbol="X")

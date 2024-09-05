@@ -1,0 +1,26 @@
+name: lysautosearch
+#volumes:
+#  - ~/.config/gcloud:/root/.config/gcloud
+channels:
+  - conda-forge
+  - defaults
+  - bioconda
+  - schrodinger
+dependencies:
+  - pyopenssl
+  - python=3.10
+  - requests
+  - pip:
+    - -r requirements.txt
+  - numpy
+  - biopython
+  - pandas
+  - matplotlib
+  - schrodinger::pymol-bundle
+  - request
+
+
+
+
+
+

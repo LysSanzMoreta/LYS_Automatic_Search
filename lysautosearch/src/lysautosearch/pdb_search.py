@@ -50,7 +50,7 @@ parser = argparse.ArgumentParser()
 
 #COMPULSORY files: Give error if not present
 parser.add_argument('--Proteins',required = True,help = 'FULL Path to file with all positively selected peptide sequences')
-parser.add_argument('--Codeml',required =True,help ='FULL path to tab separated text file with the fasta ids and the paths to codeml output files (M8)')
+parser.add_argument('--codeml',required =True,help ='FULL path to tab separated text file with the fasta ids and the paths to codeml output files (M8)')
 #OPTIONAL arguments:
 parser.add_argument('--format', help = 'Sequence or Multiple Alignment File Format (default fasta), do not write it with quotes',default = 'fasta')
 parser.add_argument("--prob", help = 'Choice of level of posterior probability on the sites, 95% or 99% from M8 Out file', default= int(99)) 	# prob : Posterior probability percentage of the positive sites , 99 or 95, default= 99
@@ -59,7 +59,7 @@ parser.add_argument("--print_alignment",help= 'Choose to visualize the PDB file 
 parser.add_argument("--number_homologous",help= 'Select the top n homologous proteins to be chosen to perform the positions dataframes ordered by resolution', default=int(3))
 
 args = parser.parse_args()
-Genes,codeml_output,Gene_file_format,prob,missing_data,print_alignment,number_homologous = [args.Proteins,args.Codeml,args.format,args.prob,args.missing_data,args.print_alignment,args.number_homologous]
+Genes,codeml_output,fasta_format,prob,missing_data,print_alignment,number_homologous = [args.Proteins,args.Codeml,args.format,args.prob,args.missing_data,args.print_alignment,args.number_homologous]
 
 #Check all the necessary files are present and the right arguments are given:
 File_formats = ['fasta','phylip_sequential','clustal','embl','genebank','gb','abi','ace','fastq-sanger','fastq','fastq-solexa','fastq-illumina','ig','imgt','pdb-seqres','pdb-atom','phd','phylip','pir','seqxml','sff','stockholm','swiss','tab','qual','uniprot-xml']
@@ -71,7 +71,7 @@ elif prob not in [95,99]:
     parser.error('Probability values can only be 95  or 99')
 elif missing_data not in ['no','yes']:
     parser.error('Choose to keep missing data: yes or to remove it: no')
-elif Gene_file_format not in File_formats:
+elif fasta_format not in File_formats:
     parser.error('Invalid Gene File Format.Check available SeqIO biopython file formats ')
 else:
     print('Building dataframe...')
@@ -271,8 +271,8 @@ def Download_selected_PDB_files_and_add_resolution_and_percentage_id(initial_dat
             ungrouped_dataframe.loc[index,'Resolution'] = float(resolution)
         except:#assign value to missing resolution values to force to discard them
             ungrouped_dataframe.loc[index, 'Resolution']= float(5)
-    ungrouped_dataframe['Chains'] = ungrouped_dataframe['Chains']
 
+    ungrouped_dataframe['Chains'] = ungrouped_dataframe['Chains']
     ungrouped_dataframe['Resolution'] = ungrouped_dataframe['Resolution'].astype('float64')
     #SELECT NUMBER OF PROTEIN MATCHES TO BE SELECTED
     print(ungrouped_dataframe["Resolution"])
@@ -563,8 +563,8 @@ def Folders(Genes, folder_name):
 def Calling_Pymol():
     """ Call Pymol in each gene and corresponding PDB file in the dataframe"""
     #Read the input fasta file and divide the gene ids and the sequences
-    List_protein_names =fasta_to_sequences(Genes,Gene_file_format)[1]
-    List_protein_sequences=fasta_to_sequences(Genes,Gene_file_format)[0]
+    List_protein_names =fasta_to_sequences(Genes,fasta_format)[1]
+    List_protein_sequences=fasta_to_sequences(Genes,fasta_format)[0]
     List_protein_sequences=[Translate_and_Remove_missing_data(sequence) for sequence in List_protein_sequences]
     #Generate the full and filtered summary dataframe with the top suggested homologous proteins from PDB
 
@@ -583,7 +583,7 @@ def Calling_Pymol():
         PDB_file_name =row["PDB_files"].strip("'")
         #Chains =row["Chains"].strip("'") #','.join(list(chains))
         Chains =','.join(list(row['Chains'].strip("'")))#I don't think I want a list here...
-        Gene= ''.join([str(fasta.seq) for fasta in SeqIO.parse(open(Genes),Gene_file_format) if fasta.id == Gene_name])#maybe str(fasta.seq)
+        Gene= ''.join([str(fasta.seq) for fasta in SeqIO.parse(open(Genes),fasta_format) if fasta.id == Gene_name])#maybe str(fasta.seq)
         if not basepath:
             try:
                 PDB_file = os.path.join("PDB_files" + "/pdb%s.ent" % row["PDB_files"].strip("'").lower())
@@ -603,10 +603,10 @@ def Calling_Pymol():
         M8 = ''.join([path for id,path in dictionary.items() if id==Gene_name])
         try:
             List_domains = PROSITE_domains(PDB_sequence)
-            Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, Gene_file_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
+            Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, fasta_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
         except:
             List_domains = []
-            Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, Gene_file_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
+            Data = Wrapper_of_all_functions(PDB_sequence, Gene, Chains, M8, List_domains, fasta_format, prob,missing_data, Residues_ID, PDB_file, print_alignment,Gene_name)
 
 if __name__ == "__main__":
 

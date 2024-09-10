@@ -19,32 +19,37 @@ def main(args):
     if not os.path.exists(args.pdb_files):
         LASutils.folders("PDB_files", script_dir,overwrite=False) #only overwrite=True if we want to re-download everything
         args.__dict__["pdb_files"] = "{}/{}".format(script_dir,"PDB_files")
-    lysautosearch.run(args,parser,results_dir)
+    if args.visualize_single_result:
+        lysautosearch.visualize_single_result(args)
+    else:
+        lysautosearch.run(args,parser,results_dir)
 
-if __name__ == "__main__":
+
+
+#/home/dragon/drive/lys/Dropbox/MasterRepositories/LYS_Automatic_Search/LYS_autosearch_example.py
+if __name__ == "__main__": #
     parser = argparse.ArgumentParser(description="LYS auto search args",formatter_class=RawTextHelpFormatter)
     # COMPULSORY files: Give error if not present
     parser.add_argument('--results-name',
                         help='Run/Results name',default="Test")
     parser.add_argument('--proteins',
-                        help='FULL Path to file with all positively selected peptide sequences',default="TestSequences/Test5.fasta")
+                        help='FULL Path to file with all positively selected peptide sequences',default=f"{script_dir}/TestSequences/Test5.fasta")
     parser.add_argument('--codeml-output',
-                        help='FULL path to tab separated text file with the fasta ids and the paths to codeml output files (M8)',default="TestSequences/Gene_paths.txt")
+                        help='Path to folder containing the .paml files and a tab separated text file with the fasta ids and their corresponding codeml output files (M8)',default=f"{script_dir}/TestSequences")
     # OPTIONAL arguments:
     parser.add_argument('--blast-results',
                         help='Path to previously run Blast results dataframe found under the name of -Full_Blast_results_against_PDB.tsv-',
-                        default="/home/lys/Dropbox/MasterRepositories/LYS_Automatic_Search/RESULTS_LysAutoSearch_Test_2024_09_05_19h24min52s188505ms/Full_Blast_results_against_PDB.tsv")
+                        default=f"{script_dir}/RESULTS_LysAutoSearch_Test_2024_09_10_15h39min08s620906ms/Full_Blast_results_against_PDB.tsv")
 
     parser.add_argument('--pdb-files',
                         help='Path to folder with PDB files, otherwise a new folder will created and new download run will take place',
-                        default="/home/lys/Dropbox/MasterRepositories/LYS_Automatic_Search/PDB_files")
+                        default=f"{script_dir}/PDB_files")
+
     parser.add_argument('--pdb-results',
                         help='Path to file containing the matrix with the PDB files from the homologous sequences under the name of -Full_Blast_results_against_PDB_Filtered.tsv-',
                         #default="",
-                        default="/home/lys/Dropbox/MasterRepositories/LYS_Automatic_Search/RESULTS_LysAutoSearch_Test_2024_09_05_19h24min52s188505ms/Full_Blast_results_against_PDB_Filtered.tsv"
+                        default=f"{script_dir}/RESULTS_LysAutoSearch_Test_2024_09_10_15h39min08s620906ms/Full_Blast_results_against_PDB_Filtered.tsv"
                         )
-
-
     parser.add_argument('--fasta-format',
                         help='Sequence or Multiple Alignment File Format (default fasta), do not write it with quotes',
                         default='fasta')
@@ -57,13 +62,30 @@ if __name__ == "__main__":
                              99))  # prob : Posterior probability percentage of the positive sites , 99 or 95, default= 99
     parser.add_argument("--missing_data",
                         help='Decide if the missing data("N") should be removed from the nucleotide sequence, default = yes, recommended for the alignment',
-                        default='yes')  # missing_data : remove or not missing data from the sequence alignment: yes or no, default=yes
+                        default='no')  # missing_data : remove or not missing data from the sequence alignment: yes or no, default=yes
     parser.add_argument("--print_alignment",
                         help='Choose to visualize the PDB file sequence aligned with the gene, default = no',
                         default='no')
     parser.add_argument("--number_homologous",
                         help='Select the top n homologous proteins to be chosen to perform the positions dataframes ordered by resolution',
                         default=int(3))
+
+    #Highlight: Arguments for visualizing a single gene/protein and its PDB close homolog
+
+    parser.add_argument("--visualize-single-result",
+                        type=bool,
+                        help='',
+                        default=True)
+
+    parser.add_argument("--lysautosearch-pymol-dataframe",
+                        help='Path to the dataframe created for the gene/protein - homolog PDB pair',
+                        default='no')
+    parser.add_argument("--full-pdb-sequence",
+                        help='',
+                        default='no')
+    parser.add_argument("--use-prosite",
+                        help='Use the Prosite results',
+                        default='no')
 
     args = parser.parse_args()
     args.__dict__["script_dir"] = script_dir

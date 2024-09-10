@@ -39,24 +39,30 @@ def start_blast(args,results_dir):
 
     return blast_df
 
-#def Wrapper_of_all_functions(PDB_sequence,Gene,Chains,M8,List_Domains,Format,prob,missing_data,Residues_ID,basepath,print_alignment,Gene_name):
-def build_PyMOL_dataframe(PDB_sequence, sequences_dict, gene_name, chains, M8_file, domains_idx, residues_ID, pdb_file_name, args):
+#def Wrapper_of_all_functions(pdb_sequence,Gene,Chains,M8,List_Domains,Format,prob,missing_data,Residues_ID,basepath,print_alignment,Gene_name):
+def build_PyMOL_dataframe(pdb_sequence, sequences_dict, gene_name, chains, M8_file, domains_idx, residues_ID, pdb_file_name, args):
     '''Calls the function that builds the dataframe of positions that will be read by PyMOL according to according to the optional arguments
     given by the user'''
-    positives_sites =LASutils.extract_positive_sites(M8_file,args.prob)
 
-    print(positives_sites)
+    M8_file = os.path.join(args.codeml_output,M8_file)
 
-    exit()
+    positives_sites =LASutils.extract_positive_sites(M8_file,args.probability)
     prot_missing_data= sequences_dict["prot_missing_data"]
     prot_no_missing_data= sequences_dict["prot_no_missing_data"]
     #Checking if the user wants to perform the alignment with or without missing data in the gene
     if args.missing_data == 'no': ###The sequence 'Gene' will be translated at this point no matter what
-        Clean_positions = LASutils.corresponding_positions_missing_notmissing_data(prot_missing_data,prot_no_missing_data) #Find the equivalent positions among the protein with and without missing data
-        pymol_dataframe =Corresponding_Coordinates_and_labels_PDB_Gene(PDB_sequence,prot_no_missing_data, positives_sites,domains_idx,residues_ID,basepath,print_alignment,Gene_name, Clean_positions)
+        #TODO: refactor Clean_positions to mapped_positions
+        mapped_positions = LASutils.corresponding_positions_missing_notmissing_data(prot_missing_data,prot_no_missing_data) #Find the equivalent positions among the protein with and without missing data
+        #pymol_dataframe =Corresponding_Coordinates_and_labels_PDB_Gene(pdb_sequence,prot_no_missing_data, positives_sites,domains_idx,residues_ID,basepath,args.print_alignment,gene_name, mapped_positions)
+        pymol_dataframe =LASutils.corresponding_coordinates_and_labels_PDB_gene(pdb_sequence, pdb_file_name,prot_no_missing_data, positives_sites,domains_idx,residues_ID,args.proteins,args,gene_name, mapped_positions)
 
     else:
-        pymol_dataframe =Corresponding_Coordinates_and_labels_PDB_Gene(PDB_sequence,prot_missing_data,List_of_Positive_Positions,List_Domains,Residues_ID,basepath,print_alignment,Gene_name)
+        #pymol_dataframe =Corresponding_Coordinates_and_labels_PDB_Gene(pdb_sequence,prot_missing_data,List_of_Positive_Positions,List_Domains,Residues_ID,basepath,print_alignment,Gene_name)
+
+        pymol_dataframe = LASutils.corresponding_coordinates_and_labels_PDB_gene(pdb_sequence, pdb_file_name, prot_missing_data,
+                                                                                 positives_sites, domains_idx,
+                                                                                 residues_ID, args.proteins, args,
+                                                                                 gene_name)
         #Corresponding_Coordinates_and_labels_PDB_Gene(PDB,Gene,List_of_Positive_Positions,functional_list,Residues_ID,basepath,print_alignment,Clean_positions = None):
     return pymol_dataframe
 
@@ -86,8 +92,10 @@ def run(args,parser,results_dir): #transferring pdb_search here
     else:
         PDB_files_dataframe = LASutils.process_blast_results(args,blast_df)
 
+
     #Read the file with paths to codeml output
-    Codeml = pd.read_csv(args.codeml_output, sep='\s+', header=None)
+
+    Codeml = pd.read_csv(os.path.join(args.codeml_output,"Gene_paths.txt"), sep='\s+', header=None)
 
 
     paml_results= Codeml.iloc[:,0].tolist()
@@ -104,28 +112,30 @@ def run(args,parser,results_dir): #transferring pdb_search here
         chains =','.join(list(row['Chains'].strip("'")))#I don't think I want a list here...
 
         prot_missing_data,prot_no_missing_data = fasta_dict[gene_name]
-        prot_missing_data = prot_missing_data[0].replace("'","")  if isinstance(prot_missing_data,list) else prot_missing_data.replace("'","")
-        prot_no_missing_data = prot_no_missing_data[0].replace("'","")  if isinstance(prot_no_missing_data,list) else prot_no_missing_data.replace("'","")
-
+        prot_missing_data = prot_missing_data[0].replace("'","")  if isinstance(prot_missing_data,list) else prot_missing_data.replace("'","").replace("[","").replace("]","")
+        prot_no_missing_data = prot_no_missing_data[0].replace("'","")  if isinstance(prot_no_missing_data,list) else prot_no_missing_data.replace("'","").replace("[","").replace("]","")
         filename_ent = os.path.join(args.pdb_files + "/pdb%s.ent" % pdb_file_name.lower())
         filename_cif = os.path.join(args.pdb_files + "/%s.cif" % pdb_file_name.lower())
         #if not os.path.exists(filename_ent) and not os.path.exists(filename_cif):
         if os.path.exists(filename_ent):
-            residues_ID, PDB_sequence = LASutils.extract_sequence_from_PDB(filename_ent, chains,parser="ent")
+            residues_ID, pdb_sequence = LASutils.extract_sequence_from_PDB(filename_ent, chains,parser="ent")
         elif os.path.exists(filename_cif):
-            residues_ID, PDB_sequence = LASutils.extract_sequence_from_PDB(filename_cif, chains,parser="cif")
+            residues_ID, pdb_sequence = LASutils.extract_sequence_from_PDB(filename_cif, chains,parser="cif")
         else:continue
 
         M8_file = ''.join(dict_paths[gene_name])
-        if PDB_sequence:
+        if pdb_sequence:
             # Extract positions that possibly belong to a domain in index 1 format
-            domains_idx = LASutils.PROSITE_domains(PDB_sequence)
+            domains_idx = LASutils.PROSITE_domains(pdb_sequence)
         else:
             domains_idx = []
 
         sequences_dict = {"prot_missing_data":prot_missing_data,"prot_no_missing_data":prot_no_missing_data}
 
+        if pdb_sequence:
+            data = build_PyMOL_dataframe(pdb_sequence, sequences_dict, gene_name, chains, M8_file, domains_idx, residues_ID, pdb_file_name, args)
 
-        data = build_PyMOL_dataframe(PDB_sequence, sequences_dict, gene_name, chains, M8_file, domains_idx, residues_ID, pdb_file_name, args)
 
-
+def visualize_single_result(args):
+    """"""
+    #single call to build dataframe and pymol

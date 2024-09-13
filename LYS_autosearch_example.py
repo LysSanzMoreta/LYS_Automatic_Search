@@ -35,7 +35,8 @@ if __name__ == "__main__": #
     parser.add_argument('--proteins',
                         help='FULL Path to file with all positively selected peptide sequences',default=f"{script_dir}/TestSequences/Test5.fasta")
     parser.add_argument('--codeml-output',
-                        help='Path to folder containing the .paml files and a tab separated text file with the fasta ids and their corresponding codeml output files (M8)',default=f"{script_dir}/TestSequences")
+                        help='Path to folder containing the .paml files and a tab separated text file with the fasta ids and their corresponding codeml output files (M8)',
+                        default=f"{script_dir}/TestSequences")
     # OPTIONAL arguments:
     parser.add_argument('--blast-results',
                         help='Path to previously run Blast results dataframe found under the name of -Full_Blast_results_against_PDB.tsv-',
@@ -77,7 +78,7 @@ if __name__ == "__main__": #
     parser.add_argument("--visualize-single-result",
                         type=bool,
                         help='',
-                        default=True)
+                        default=False)
     parser.add_argument("--lysautosearch-pymol-dataframe",
                         help='Path to the dataframe created for the gene/protein-homolog PDB pair',
                         default=f'{script_dir}/RESULTS_LysAutoSearch_Test_2024_09_10_15h39min08s620906ms/sca1.119.1.map2per.fasta.paml.p1_5ZBA_Positions.tsv')

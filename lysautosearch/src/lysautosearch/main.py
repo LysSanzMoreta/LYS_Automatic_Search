@@ -1,8 +1,10 @@
+import ntpath
 import os.path
 import pandas as pd
 import lysautosearch
 import lysautosearch.utils as LASutils
 import lysautosearch.blast_tools as LASblast
+import lysautosearch.pymol_api as LASpymol
 from Bio import SeqRecord, SeqIO
 
 def args_checker(args,parser):
@@ -139,3 +141,31 @@ def run(args,parser,results_dir): #transferring pdb_search here
 def visualize_single_result(args):
     """"""
     #single call to build dataframe and pymol
+
+    assert args.pdb_files is not None, "Please provide the path to the folder containing the PDB files"
+    assert args.pdb_results is not None, "Please provide the path to the Blast filtered results (Full_Blast_results_against_PDB_Filtered.tsv) "
+    assert args.lysautosearch_pymol_dataframe is not None, "Please provide the path to the dataframe of the proteins you want to process (fasta_pdb_positions.tsv)"
+
+
+    pdb_results = pd.read_csv(args.pdb_results,sep="\t")
+
+    pymol_dataframe = pd.read_csv(args.lysautosearch_pymol_dataframe,sep="\t")
+    split_result = ntpath.basename(args.lysautosearch_pymol_dataframe).split("_")
+    pdb_name = split_result[-2]
+    sequence_name = split_result[:-2]
+    _, pdb_file = LASutils.matching_file(args.pdb_files, pdb_name.lower())
+
+    if not args.use_gui:
+
+
+        LASpymol.call_pymol(pdb_name,
+                            pdb_file,
+                            args.lysautosearch_pymol_dataframe,
+                            args.results_dir)
+    else:
+        LASpymol.call_pymol_gui(pdb_name,
+                            pdb_file,
+                            args)
+
+
+

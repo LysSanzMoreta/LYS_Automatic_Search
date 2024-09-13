@@ -1,4 +1,4 @@
-import functools
+import functools,re
 from functools import partial
 from Bio.Seq import Seq
 from Bio.PDB import PDBList
@@ -11,11 +11,13 @@ from Bio.SeqUtils import seq1
 from Bio.ExPASy import ScanProsite
 from Bio import pairwise2
 from Bio.pairwise2 import format_alignment
+from Bio import BiopythonWarning
 import pandas as pd
 import os,shutil,ntpath,itertools
 import itertools
 import numpy as np
-
+import warnings
+warnings.simplefilter('ignore', BiopythonWarning)
 
 def folders(folder_name,basepath,overwrite=True):
     """ Creates a folder at the indicated location. It rewrites folders with the same name
@@ -40,6 +42,26 @@ def folders(folder_name,basepath,overwrite=True):
             os.makedirs(newpath,0o777)
         else:
             pass
+
+def matching_file(datapath:str,filename:str):
+    """Finds any file starting with <filename>"""
+    pattern = re.compile(filename)
+    matched = [ file if pattern.match(file) else None for file in os.listdir(datapath)]
+    matched = [i for i in matched if i is not None]
+
+
+    if len(matched) > 1:
+        #Return the smallest? kind of works
+        matched = list(sorted(matched,key=len))
+        filepath = os.path.join(datapath, matched[0])
+    elif len(matched) == 1:
+        filepath = os.path.join(datapath, matched[0])
+    else:
+        filepath = f"{datapath}/{filename}"
+
+    return matched,filepath
+
+
 def url_reader(lines):
     """Matches a pattern and reads and stores the lines until it finds another identical pattern"""
     buffer = []
@@ -300,16 +322,6 @@ def equivalent_positions(chain_a, chain_b,aligned_a, aligned_b,residues_ID = Non
     print("Mapping positions")
 
     #TODO: Probably it can be better managed with a dictionary?
-    #OriginalA = np.array(range(1, len(chain_a))) #Array of positions of the first given sequence
-
-    # Find the non-gapped equivalent positions
-    non_gapped_sites = [] #Will store the Positions where there are no gaps in the aligned sequences, these are still not the PDB positions !!
-    # for index,residue in enumerate(aligned_a):
-    #     if aligned_a[index] != '-' and aligned_b[index] != '-':
-    #             #OriginalA[:index] += 1
-    #             non_gapped_sites.append(index +1) #In index 1 for PDB file
-    #     else:
-    #         pass
 
     non_gapped_sites = list(map(functools.partial(lambda aligned_a,aligned_b,index: index +1 if aligned_a[index] != '-' and aligned_b[index] != '-' else None, aligned_a,aligned_b),list(range(len(aligned_a)))))
     non_gapped_sites=list(filter(lambda v: v is not None, non_gapped_sites))
@@ -329,27 +341,14 @@ def equivalent_positions(chain_a, chain_b,aligned_a, aligned_b,residues_ID = Non
     accumulated_number_gaps_in_this_segment = gaps_first_segment
     accumulated_number_gaps_in_this_segment_transcript = gaps_first_segment_transcript
     for i in range(0,len(non_gapped_sites)-1): #cannot start at position 1 otherwise we skip one
-        #print(i)
-        #try:
+
         accumulated_number_gaps_in_this_segment += ''.join(aligned_a[non_gapped_sites[i]:non_gapped_sites[i+1]]).count('-')
         positions_in_PDB.append(non_gapped_sites[i+1] - accumulated_number_gaps_in_this_segment)
-        # except:
-        #     pass
-        #try:
+
         accumulated_number_gaps_in_this_segment_transcript += ''.join(aligned_b[non_gapped_sites[i]:non_gapped_sites[i + 1]]).count('-')
         positions_in_transcript.append(non_gapped_sites[i+1] - accumulated_number_gaps_in_this_segment_transcript) # plus on otherwise negative numbers
-        # except:
-        #     pass
 
-    #Position_in_Transcript.append(non_gapped_sites[1] - gaps_first_segment_Transcript - ''.join(aligned_b[non_gapped_sites[0]:non_gapped_sites[1]]).count('-'))
 
-    #
-    # for i in range(0, len(non_gapped_sites)):  # we skip the first interval
-    #     try:
-    #         accumulated_number_gaps_in_this_segment_transcript += ''.join(aligned_b[non_gapped_sites[i]:non_gapped_sites[i + 1]]).count('-')
-    #         position_in_transcript.append(non_gapped_sites[i+1] - accumulated_number_gaps_in_this_segment_transcript) # plus on otherwise negative numbers
-    #     except:
-    #         pass
     if not domain_positions:
         if residues_ID: #residues ID has the same length as the PDB crystallized sequence #recall: is cheaper to do the if statement outside once
             for position_transcript,position_PDB in zip(positions_in_transcript,positions_in_PDB): #this are non_gapped_sites of the correspondance on both sides

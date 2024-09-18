@@ -82,10 +82,7 @@ if __name__ == "__main__": #
     parser.add_argument("--lysautosearch-pymol-dataframe",
                         help='Path to the dataframe created for the gene/protein-homolog PDB pair',
                         default=f'{script_dir}/RESULTS_LysAutoSearch_Test_2024_09_10_15h39min08s620906ms/sca1.119.1.map2per.fasta.paml.p1_5ZBA_Positions.tsv')
-    # #If lysautosearch-pymol-dataframe is not given, then at least we need to provide 1 sequence???
-    # parser.add_argument("--full-pdb-sequence",
-    #                     help='',
-    #                     default='no')
+
     parser.add_argument("--use-gui",
                         help='Use the GUI to perfect the rotation of the protein',
                         default='yes')

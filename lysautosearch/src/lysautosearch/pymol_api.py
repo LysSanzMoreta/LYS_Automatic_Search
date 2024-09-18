@@ -53,6 +53,8 @@ def call_pymol(sname:str,
 
 
     # Load Structures
+    pymol.cmd.delete("all") #this reinitializes everything
+    # Load your structure (adjust path or PDB ID accordingly)
     pymol.cmd.load(pdb_file, sname)
     pymol.cmd.disable("all")  # toggles off the display of all currently visible representations of an object. It is the equivalent of deselecting the object
     pymol.cmd.enable(sname)
@@ -71,6 +73,7 @@ def call_pymol(sname:str,
             'Domain': Domain,
             'Selected_and_Domain': Selected_and_Domain
         }
+
 
         #BACKGROUND & SHAPES
         cmd.bg_color('white')
@@ -136,9 +139,12 @@ def transform(variable):
 
 
 class MyFrame(Frame):
-    def __init__(self,den,vars_dict,dict_keys):
+    def __init__(self,den,tmp_dict,dict_keys,pdb_name,pdb_file,args):
         Frame.__init__(self,den)
-        self.vars_dict = vars_dict
+        self.vars_dict = {key:val[0] for key,val in tmp_dict.items()}
+        self.pdb_name = pdb_name
+        self.pdb_file = pdb_file
+        self.args = args
         self.dict_keys = dict_keys
         self.master.rowconfigure(10, weight=1)
         self.master.columnconfigure(4, weight=0) #weight 0 is supposed to avoid column spread
@@ -199,7 +205,7 @@ class MyFrame(Frame):
         self.run.grid(row=8, column=1)
 
     def button_action(self): #Insert all the default values here
-        pymol.cmd.reinitialize('everything')
+
 
         for key,val in self.dict_keys.items():
             if hasattr(self,val[0]):
@@ -208,15 +214,20 @@ class MyFrame(Frame):
             else:
                 setattr(self, val[1], val[2])
         #self.start_pymol_thread()
+        # pymol.cmd.reinitialize('everything') #only use to load pymol in the background
 
-    # def start_pymol_thread(self): #TODO: Make work to have tkinter and pymol Gui working together
-    #     pymol_thread = threading.Thread(target=call_pymol,args=(pdb_name,
-    #                pdb_file,
-    #                args.lysautosearch_pymol_dataframe,
-    #                args.results_dir,
-    #                vars_dict))
-    #     pymol_thread.daemon = True  # Ensure the thread exits when the main program exits
-    #     pymol_thread.start()
+    def start_pymol_thread(self): #unnecessary, delete?
+        #pymol.cmd.reinitialize('everything')
+        pymol_thread = threading.Thread(target=call_pymol,args=(self.pdb_name,
+                   self.pdb_file,
+                   self.args.lysautosearch_pymol_dataframe,
+                   self.args.results_dir,
+                   self.vars_dict))
+        pymol_thread.daemon = True  # Ensure the thread exits when the main program exits
+
+        pymol_thread.start()
+
+
 
 
 def call_pymol_gui(pdb_name,pdb_file,args):
@@ -232,6 +243,7 @@ def call_pymol_gui(pdb_name,pdb_file,args):
 
     tmp_dict = defaultdict(list, {k: [] for k in dict_keys.keys()})
 
+
     for key,val in tmp_dict.items():
         #if val : #if list is not empty
         vals = dict_keys[key]
@@ -243,7 +255,7 @@ def call_pymol_gui(pdb_name,pdb_file,args):
         den.title("Link Your Sites GUI")
         #den.geometry("500x200")
 
-        prompt = MyFrame(den,tmp_dict,dict_keys)
+        prompt = MyFrame(den,tmp_dict,dict_keys,pdb_name,pdb_file,args)
 
 
         for key,val in tmp_dict.items():
@@ -269,5 +281,4 @@ def call_pymol_gui(pdb_name,pdb_file,args):
                    args.lysautosearch_pymol_dataframe,
                    args.results_dir,
                    vars_dict)
-
 

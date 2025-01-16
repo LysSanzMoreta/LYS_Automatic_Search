@@ -7,7 +7,7 @@ import os
 
 
 def blast_dataframe(protein_sequences_missing_data:list,protein_sequences_no_missing_data:list,protein_id_names:list,results_dir:str):
-    """Builds a dataframe with all the pertinent information from the blast results"""
+    """Builds a dataframe with all the necessary information from the blast results"""
     dictionary ={}
     for protein_missing_data,protein_nomissing_data,id in zip(protein_sequences_missing_data,protein_sequences_no_missing_data,protein_id_names):
         PDBs_List,chains,percentID,sequences_missing_data,sequences_no_missing_data = blast_extract_PDB(protein_missing_data.replace("*",""),protein_nomissing_data.replace("*",""))
@@ -25,8 +25,7 @@ def blast_dataframe(protein_sequences_missing_data:list,protein_sequences_no_mis
 
 def blast_extract_PDB(protein_no_missing_data:str,protein_missing_data:str): #Translated gene sequence
     """Using the protein sequences, blast them against the PDB database and parse the result, only significant e-values: 1e-6
-    TODO: https://search.rcsb.org/#search-api
-    TODO: https://data.rcsb.org/#rest-api
+
     perhaps useful: https://github.com/rcsb/py-rcsb-api
     reference url:   #https://search.rcsb.org/query-editor.html?json=%7B%22query%22%3A%7B%22type%22%3A%22terminal%22%2C%22service%22%3A%22sequence%22%2C%22parameters%22%3A%7B%22evalue_cutoff%22%3A1%2C%22identity_cutoff%22%3A0.9%2C%22sequence_type%22%3A%22protein%22%2C%22value%22%3A%22MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSYRKQVVIDGETCLLDILDTAGQEEYSAMRDQYMRTGEGFLCVFAINNTKSFEDIHQYREQIKRVKDSDDVPMVLVGNKCDLPARTVETRQAQDLARSYGIPYIETSAKTRQGVEDAFYTLVREIRQHKLRKLNPPDESGPGCMNCKCVIS%22%7D%7D%2C%22request_options%22%3A%7B%22scoring_strategy%22%3A%22sequence%22%7D%2C%22return_type%22%3A%22polymer_instance%22%7D
 
